@@ -1,21 +1,27 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-function work(input: string) {
-  let hash = 0;
+function work(input: string): number {
+  let hash: number = 0;
+
   if (input.length === 0) return hash;
+
+  const iterations = 100000 * ((input.charCodeAt(0) % 10) + 1);
+
+  console.log(iterations);
 
   for (let i = 0; i < input.length; i++) {
     const char = input.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
+    for (let j = 0; j < iterations; j++) {
+      hash = (hash * char + 1) % 123456789;
+    }
   }
-
   return hash;
 }
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
-      const { str: input } = req.query as { str: string };
+      const { input } = req.query as { input: string };
 
       if (!input) {
         return res
